@@ -1,0 +1,16 @@
+# Binaries
+configtxgen
+configtxlator
+cryptogen
+fabric-ca-client
+orderer
+peer
+
+# Folders
+artifacts/
+crypto/
+web/certs/
+
+# Files
+web/channel.tx
+.placefolder
