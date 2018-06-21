@@ -5,7 +5,7 @@
 # How does it works?
 
 So how does the app actually work? Imagine a fresh graduate student, Ernie, decides to look for a job and 
-applied Excite Media Services. Ernie was able to show his outstanding skills and unmatched work ethics so 
+applied at Excite Media Services. Ernie was able to show his outstanding skills and unmatched work ethics so 
 he got hired in Excite Media Services. Human Resource personnel, Mon, recorded ernie's credential and 
 explained to Ernie that EMS has point system. Mon explained some important guidelines to Ernie.
 
