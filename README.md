@@ -2,7 +2,7 @@
 
 ![](/docs-images/workflow.png)
 
-# How does it works?
+# How does it work?
 
 So how does the app actually work? Imagine a fresh graduate student, Ernie, decides to look for a job and 
 applied at Excite Media Services. Ernie was able to show his outstanding skills and unmatched work ethics so 
