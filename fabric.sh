@@ -13,7 +13,7 @@ CRYPTOPATH=$ARTIFACTSPATH/crypto
 ORDERERS=$CRYPTOPATH/ordererOrganizations
 PEERS=$CRYPTOPATH/peerOrganizations
 CHANNELPATH=$PROJPATH/artifacts/channel
-CHANNEL_NAME=salamatapp
+CHANNEL_NAME=thanksapp
 
 # Remove any old artifacts
 rm -rf $ARTIFACTSPATH
