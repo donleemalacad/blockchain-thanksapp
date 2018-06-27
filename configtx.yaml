@@ -20,7 +20,7 @@ Profiles:
             Organizations:
                 - *OrdererOrg
         Consortiums:
-            SampleConsortium:
+            Org1Consortium:
                 Organizations:
                     - *Org1
     OneOrgChannel:
@@ -48,7 +48,7 @@ Organizations:
         Name: OrdererOrg
 
         # ID to load the MSP definition as
-        ID: OrdererOrgMSP
+        ID: OrdererMSP
 
         # MSPDir is the filesystem path which contains the MSP configuration
         MSPDir: artifacts/crypto/ordererOrganizations/exciteph.com/msp
@@ -67,7 +67,7 @@ Organizations:
             # AnchorPeers defines the location of peers which can be used
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
-            - Host: peer0.org1.example.com
+            - Host: peer0.org1.exciteph.com
               Port: 7051
 
 ################################################################################
@@ -85,7 +85,7 @@ Orderer: &OrdererDefaults
     OrdererType: solo
 
     Addresses:
-        - ordererorg.exciteph.com:7050
+        - orderer.exciteph.com:7050
 
     # Batch Timeout: The amount of time to wait before creating a batch
     BatchTimeout: 2s
