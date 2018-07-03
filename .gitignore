@@ -7,7 +7,7 @@ orderer
 peer
 
 # Folders
-artifacts/
+fixtures/
 crypto/
 web/certs/
 
