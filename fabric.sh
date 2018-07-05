@@ -8,11 +8,11 @@ echo "#################################################################"
 
 
 PROJPATH=${PWD}
-ARTIFACTSPATH=$PROJPATH/artifacts
-CRYPTOPATH=$ARTIFACTSPATH/crypto
+ARTIFACTSPATH=$PROJPATH/fixtures
+CRYPTOPATH=$ARTIFACTSPATH/crypto-config
 ORDERERS=$CRYPTOPATH/ordererOrganizations
 PEERS=$CRYPTOPATH/peerOrganizations
-CHANNELPATH=$PROJPATH/artifacts/channel
+CHANNELPATH=$PROJPATH/fixtures/artifacts
 CHANNEL_NAME=thanksapp
 
 # Remove any old artifacts

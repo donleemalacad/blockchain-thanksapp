@@ -7,8 +7,6 @@ orderer
 peer
 
 # Folders
-fixtures/
-crypto/
 web/certs/
 
 # Files
