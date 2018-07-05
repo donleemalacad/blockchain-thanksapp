@@ -51,7 +51,7 @@ Organizations:
         ID: OrdererMSP
 
         # MSPDir is the filesystem path which contains the MSP configuration
-        MSPDir: artifacts/crypto/ordererOrganizations/exciteph.com/msp
+        MSPDir: fixtures/crypto-config/ordererOrganizations/hf.excite.ph/msp
 
     - &Org1
         # DefaultOrg defines the organization which is used in the sampleconfig
@@ -61,13 +61,13 @@ Organizations:
         # ID to load the MSP definition as
         ID: Org1MSP
 
-        MSPDir: artifacts/crypto/peerOrganizations/org1.exciteph.com/msp
+        MSPDir: fixtures/crypto-config/peerOrganizations/org1.hf.excite.ph/msp
 
         AnchorPeers:
             # AnchorPeers defines the location of peers which can be used
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
-            - Host: peer0.org1.exciteph.com
+            - Host: peer0.org1.hf.excite.ph
               Port: 7051
 
 ################################################################################
@@ -85,7 +85,7 @@ Orderer: &OrdererDefaults
     OrdererType: solo
 
     Addresses:
-        - orderer.exciteph.com:7050
+        - orderer.hf.excite.ph:7050
 
     # Batch Timeout: The amount of time to wait before creating a batch
     BatchTimeout: 2s

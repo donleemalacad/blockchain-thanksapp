@@ -9,24 +9,24 @@ networks:
   basic: 
 
 services:
-  ca.exciteph.com:
+  ca.hf.excite.ph:
     image: hyperledger/fabric-ca
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca.exciteph.com
-      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.exciteph.com-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/4239aa0dcd76daeeb8ba0cda701851d14504d31aad1b2ddddbac6a57365e497c_sk
+      - FABRIC_CA_SERVER_CA_NAME=ca.hf.excite.ph
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.hf.excite.ph-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/e02e094e000d6239c78613077b6f716524624094fe3289c8a6af74c64e5a5e63_sk
     ports:
       - "7054:7054"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     volumes:
-      - ./artifacts/crypto/peerOrganizations/org1.exciteph.com/ca/:/etc/hyperledger/fabric-ca-server-config
-    container_name: ca.exciteph.com
+      - ./fixtures/crypto-config/peerOrganizations/org1.hf.excite.ph/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.hf.excite.ph
     networks:
       - basic
 
-  orderer.exciteph.com:
-    container_name: orderer.exciteph.com
+  orderer.hf.excite.ph:
+    container_name: orderer.hf.excite.ph
     image: hyperledger/fabric-orderer
     environment:
       - ORDERER_GENERAL_LOGLEVEL=debug
@@ -40,23 +40,23 @@ services:
     ports:
       - 7050:7050
     volumes:
-        - ./artifacts/channel/:/etc/hyperledger/configtx
-        - ./artifacts/crypto/ordererOrganizations/exciteph.com/orderers/orderer.exciteph.com/:/etc/hyperledger/msp/orderer
-        - ./artifacts/crypto/peerOrganizations/org1.exciteph.com/peers/peer0.org1.exciteph.com/:/etc/hyperledger/msp/peerOrg1
+        - ./fixtures/artifacts/:/etc/hyperledger/configtx
+        - ./fixtures/crypto-config/ordererOrganizations/hf.excite.ph/orderers/orderer.hf.excite.ph/:/etc/hyperledger/msp/orderer
+        - ./fixtures/crypto-config/peerOrganizations/org1.hf.excite.ph/peers/peer0.org1.hf.excite.ph/:/etc/hyperledger/msp/peerOrg1
     networks:
       - basic
 
-  peer0.org1.exciteph.com:
-    container_name: peer0.org1.exciteph.com
+  peer0.org1.hf.excite.ph:
+    container_name: peer0.org1.hf.excite.ph
     image: hyperledger/fabric-peer
     environment:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-      - CORE_PEER_ID=peer0.org1.exciteph.com
+      - CORE_PEER_ID=peer0.org1.hf.excite.ph
       - CORE_LOGGING_PEER=debug
       - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
       - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
-      - CORE_PEER_ADDRESS=peer0.org1.exciteph.com:7051
+      - CORE_PEER_ADDRESS=peer0.org1.hf.excite.ph:7051
       # # the following setting starts chaincode containers on the same
       # # bridge network as the peers
       # # https://docs.docker.com/compose/networking/
@@ -76,11 +76,11 @@ services:
       - 7053:7053
     volumes:
         - /var/run/:/host/var/run/
-        - ./artifacts/crypto/peerOrganizations/org1.exciteph.com/peers/peer0.org1.exciteph.com/msp:/etc/hyperledger/msp/peer
-        - ./artifacts/crypto/peerOrganizations/org1.exciteph.com/users:/etc/hyperledger/msp/users
-        - ./artifacts/channel/:/etc/hyperledger/configtx
+        - ./fixtures/crypto-config/peerOrganizations/org1.hf.excite.ph/peers/peer0.org1.hf.excite.ph/msp:/etc/hyperledger/msp/peer
+        - ./fixtures/crypto-config/peerOrganizations/org1.hf.excite.ph/users:/etc/hyperledger/msp/users
+        - ./fixtures/artifacts/:/etc/hyperledger/configtx
     depends_on:
-      - orderer.exciteph.com
+      - orderer.hf.excite.ph
       - couchdb
     networks:
       - basic
@@ -107,16 +107,16 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_LOGGING_LEVEL=DEBUG
       - CORE_PEER_ID=cli
-      - CORE_PEER_ADDRESS=peer0.org1.exciteph.com:7051
+      - CORE_PEER_ADDRESS=peer0.org1.hf.excite.ph:7051
       - CORE_PEER_LOCALMSPID=Org1MSP
-      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.exciteph.com/users/Admin@org1.exciteph.com/msp
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.hf.excite.ph/users/Admin@org1.hf.excite.ph/msp
       - CORE_CHAINCODE_KEEPALIVE=10
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
         - /var/run/:/host/var/run/
         - ./chaincode/:/opt/gopath/src/github.com/
-        - ./artifacts/crypto/:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./fixtures/crypto-config/:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
     networks:
         - basic
     #depends_on:

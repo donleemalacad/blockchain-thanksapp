@@ -7,9 +7,6 @@ cp ./binary/ubuntu/* .
 # So that configtxgen tool will be able to locate the configtx.yaml file
 export FABRIC_CFG_PATH=${PWD}
 
-# Run Fabric Network Setup
-sh ./fabric.sh
-
 # Start Network
 sh ./startNetwork.sh
 
