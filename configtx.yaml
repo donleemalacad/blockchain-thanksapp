@@ -1,9 +1,3 @@
-# Copyright IBM Corp. All Rights Reserved.
-#
-# SPDX-License-Identifier: Apache-2.0
-#
-
----
 ################################################################################
 #
 #   Profile
@@ -13,22 +7,24 @@
 #
 ################################################################################
 Profiles:
-
-    OneOrgGenesis:
+    ThanksApp:
         Orderer:
             <<: *OrdererDefaults
             Organizations:
-                - *OrdererOrg
-        Consortiums:
-            Org1Consortium:
-                Organizations:
-                    - *Org1
-    OneOrgChannel:
-        Consortium: Org1Consortium
+                # Orderer Name
+                - *Points
         Application:
             <<: *ApplicationDefaults
             Organizations:
+                # Peer Name
                 - *Org1
+        # Consortiums
+        Consortium: Org1Consortium
+        Consortiums:
+            Org1Consortium:
+                Organizations:
+                    - *Points
+                    - *Org1
 
 ################################################################################
 #
@@ -42,13 +38,16 @@ Organizations:
 
     # SampleOrg defines an MSP using the sampleconfig.  It should never be used
     # in production but may be used as a template for other definitions
-    - &OrdererOrg
+    - &Points
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
-        Name: OrdererOrg
+        Name: Points
 
         # ID to load the MSP definition as
-        ID: OrdererMSP
+        ID: hf.excite.ph
+
+        # Admin Principal
+        AdminPrincipal: Role.ADMIN
 
         # MSPDir is the filesystem path which contains the MSP configuration
         MSPDir: fixtures/crypto-config/ordererOrganizations/hf.excite.ph/msp
@@ -56,11 +55,14 @@ Organizations:
     - &Org1
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
-        Name: Org1MSP
+        Name: Org1
 
         # ID to load the MSP definition as
-        ID: Org1MSP
+        ID: org1.hf.excite.ph
 
+        AdminPrincipal: Role.ADMIN
+
+        # MSPDir is the filesystem path which contains the MSP configuration
         MSPDir: fixtures/crypto-config/peerOrganizations/org1.hf.excite.ph/msp
 
         AnchorPeers:
