@@ -30,7 +30,7 @@ client:
 
   # Root of the MSP directories with keys and certs.
   cryptoconfig:
-    path: ${GOPATH}/src/github.com/upgrade/fixtures/crypto-config
+    path: ${GOPATH}/src/github.com/thanksapp/fixtures/crypto-config
 
 
   # Some SDKs support pluggable KV stores, the properties under "credentialStore"
@@ -51,7 +51,7 @@ client:
     security:
       enabled: true
       default:
-      provider: "SW"
+        provider: "SW"
       hashAlgorithm: "SHA2"
       softVerify: true
       level: 256
@@ -121,10 +121,10 @@ channels:
 #
 organizations:
   org1:
-    mspid: Org1MSP
+    mspid: org1.hf.excite.ph
 
     # This org's MSP store (absolute path or relative to client.cryptoconfig)
-    cryptoPath:  peerOrganizations/org1.hf.excite.ph/users/User1@org1.hf.excite.ph/msp
+    cryptoPath:  peerOrganizations/org1.hf.excite.ph/users/{userName}@org1.hf.excite.ph/msp
 
     peers:
       - peer0.org1.hf.excite.ph
@@ -135,7 +135,7 @@ organizations:
     # dynamic certificate management (enroll, revoke, re-enroll). The following section is only for
     # Fabric-CA servers.
     certificateAuthorities:
-      - ca.hf.excite.ph
+      - ca.org1.hf.excite.ph
 
 #
 # List of orderers to send transaction and channel create/update requests to. For the time
@@ -144,7 +144,7 @@ organizations:
 #
 orderers:
   orderer.hf.excite.ph:
-    url: orderer.hf.excite.ph:7050
+    url: localhost:7050
 
     # these are standard properties defined by the gRPC library
     # they will be passed in as-is to gRPC client constructor
@@ -161,7 +161,7 @@ orderers:
       allow-insecure: false
     tlsCACerts:
       # Certificate location absolute path
-      path: ${GOPATH}/src/github.com/hyperledger/upgrade/fixtures/crypto-config/ordererOrganizations/hf.excite.ph/tlsca/tlsca.hf.excite.ph-cert.pem
+      path: ${GOPATH}/src/github.com/thanksapp/fixtures/crypto-config/ordererOrganizations/hf.excite.ph/tlsca/tlsca.hf.excite.ph-cert.pem
 
 #
 # List of peers to send various requests to, including endorsement, query
@@ -188,7 +188,7 @@ peers:
 
     tlsCACerts:
       # Certificate location absolute path
-      path: ${GOPATH}/src/github.com/hyperledger/upgrade/fixtures/crypto-config/peerOrganizations/org1.hf.excite.ph/tlsca/tlsca.org1.hf.excite.ph-cert.pem
+      path: ${GOPATH}/src/github.com/thanksapp/fixtures/crypto-config/peerOrganizations/org1.hf.excite.ph/tlsca/tlsca.org1.hf.excite.ph-cert.pem
 
 #
 # Fabric-CA is a special kind of Certificate Authority provided by Hyperledger Fabric which allows
@@ -196,7 +196,7 @@ peers:
 # Certificate Authority instead of Fabric-CA, in which case this section would not be specified.
 #
 certificateAuthorities:
-  ca.hf.excite.ph:
+  ca.org1.hf.excite.ph:
     url: https://localhost:7054
     # Fabric-CA supports dynamic user enrollment via REST APIs. A "root" user, a.k.a registrar, is
     # needed to enroll and invoke new users.
@@ -206,10 +206,10 @@ certificateAuthorities:
       enrollId: admin
       enrollSecret: adminpw
     # [Optional] The optional name of the CA.
-    caName: ca.hf.excite.ph
+    caName: ca.org1.hf.excite.ph
     tlsCACerts:
       # Certificate location absolute path
-      path: ${GOPATH}/src/github.com/upgrade/fixtures/crypto-config/peerOrganizations/org1.hf.excite.ph/ca/ca.org1.hf.excite.ph-cert.pem
+      path: ${GOPATH}src/github.com/thanksapp/fixtures/crypto-config/peerOrganizations/org1.hf.excite.ph/ca/ca.org1.hf.excite.ph-cert.pem
 
 entityMatchers:
   peer:
