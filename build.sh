@@ -1,8 +1,4 @@
 #!/bin/bash
-set -e
-
-# Copy All Binaries from /binary/ubuntu/ to Current directory
-#cp ./binary/ubuntu/* .
 
 # So that configtxgen tool will be able to locate the configtx.yaml file
 export FABRIC_CFG_PATH=${PWD}
@@ -61,14 +57,7 @@ startApp() {
     
     # Fire Binary
     ./thanksapp
-    thanksapp
 }
-
-devCommand() {
-    buildUp
-    startApp
-}
-
 
 # Display User Choices
 echo "================================================================="
@@ -116,8 +105,8 @@ while true; do
         [3]* ) invokeDocker ; break ;;
         [4]* ) startApp ;  break ;;
         [5]* ) destroyDocker ; break;;
-        [6]* ) cleanUp buildUp invokeDocker startApp ; break;;
-        [7]* ) devCommand ; break;;
+        [6]* ) cleanUp && buildUp && invokeDocker && startApp ; break;;
+        [7]* ) buildUp && startApp ; break;;
         * ) echo "|   Inputted value is not valid! ";;
     esac
 done
