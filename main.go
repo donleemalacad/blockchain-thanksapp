@@ -33,6 +33,14 @@ func main() {
 		fmt.Printf("Unable to initialize the Fabric SDK: %v\n", err)
 		return
 	}
+
 	// Close SDK
 	defer setup.CloseSDK()
+
+	// Install and instantiate the chaincode
+	err = setup.InvokeChaincode()
+	if err != nil {
+		fmt.Printf("Unable to instantiate the chaincode: %v\n", err)
+		return
+	}
 }

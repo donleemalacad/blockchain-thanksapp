@@ -38,13 +38,13 @@ client:
   credentialStore:
     # [Optional]. Used by user store. Not needed if all credentials are embedded in configuration
     # and enrollments are performed elswhere.
-    path: "/tmp/thanks-app-kvs"
+    path: "/tmp/thanksapp-kvs"
 
   # [Optional]. Specific to the CryptoSuite implementation used by GO SDK. Software-based implementations
   # requiring a key store. PKCS#11 based implementations does not.
   cryptoStore:
     # Specific to the underlying KeyValueStore that backs the crypto key store.
-    path: /tmp/thanks-app-msp
+    path: /tmp/thanksapp-msp
 
   # BCCSP config for the client. Used by GO SDK.
   BCCSP:

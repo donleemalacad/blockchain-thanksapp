@@ -3,11 +3,15 @@ package integration
 import (
 	"fmt"
 	mspclient "github.com/hyperledger/fabric-sdk-go/pkg/client/msp"
+	packager  "github.com/hyperledger/fabric-sdk-go/pkg/fab/ccpackager/gopackager"
+	"github.com/hyperledger/fabric-sdk-go/pkg/client/channel"
+	"github.com/hyperledger/fabric-sdk-go/pkg/client/event"
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/resmgmt"
 	"github.com/hyperledger/fabric-sdk-go/pkg/common/errors/retry"
 	"github.com/hyperledger/fabric-sdk-go/pkg/common/providers/msp"
 	"github.com/hyperledger/fabric-sdk-go/pkg/core/config"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
+	"github.com/hyperledger/fabric-sdk-go/third_party/github.com/hyperledger/fabric/common/cauthdsl"
 	"github.com/pkg/errors"
 )
 
@@ -26,6 +30,8 @@ type SdkSetup struct {
 	SdkConfigFile   string
 	sdk             *fabsdk.FabricSDK
 	resClient       *resmgmt.Client
+	channelClient   *channel.Client
+	eventClient     *event.Client
 }
 
 // Initialize reads the configuration file and sets up the client, chain and event hub
@@ -99,6 +105,39 @@ func (integrate *SdkSetup) Initialize() error {
 	return nil
 }
 
+// Invoke Chaincode
+func (integrate *SdkSetup) InvokeChaincode() error {
+	// Create chaincode package
+	chaincodePackage, err := packager.NewCCPackage(integrate.ChaincodePath, integrate.GoPath)
+	if err != nil {
+		return errors.WithMessage(err, "Failed to create chaincode package")
+	}
+	fmt.Println("Chaincode Package created")
+
+	// Install chaincode to peers
+	chaincodeProper := resmgmt.InstallCCRequest{Name: integrate.ChaincodeName, Path: integrate.ChaincodePath, Version: "0", Package: chaincodePackage}
+	_, err = integrate.resClient.InstallCC(chaincodeProper, resmgmt.WithRetry(retry.DefaultResMgmtOpts))
+	if err != nil {
+		return errors.WithMessage(err, "Failed to install chaincode")
+	}
+	fmt.Println("Chaincode installed")
+
+	// Setup Chaincode Policy using peer id
+	chaincodePolicy := cauthdsl.SignedByAnyMember([]string{"org1.hf.excite.ph"})
+
+	// Org resource manager will instantiate chaincode on channel
+	resp, err := integrate.resClient.InstantiateCC(integrate.ChannelName, resmgmt.InstantiateCCRequest{ Name: integrate.ChaincodeName, Path: integrate.ChaincodePath, Version: "0", Args: [][]byte{[]byte("init"), []byte("a"), []byte("100"), []byte("b"), []byte("200")}, Policy: chaincodePolicy, },)
+
+	if err != nil || resp.TransactionID == "" {
+		return errors.WithMessage(err, "Failed to instantiate the chaincode")
+	}
+	
+	fmt.Println("Chaincode instantiated")
+
+	return nil
+}
+
+// Close SDK
 func (integrate *SdkSetup) CloseSDK() {
 	integrate.sdk.Close()
 }

@@ -11,7 +11,7 @@ networks:
 services:
   # Certificate Authority
   ca.org1.hf.excite.ph:
-    image: hyperledger/fabric-ca
+    image: hyperledger/fabric-ca:x86_64-1.1.0
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca.hf.excite.ph
@@ -33,7 +33,7 @@ services:
   # Orderer
   orderer.hf.excite.ph:
     container_name: orderer.hf.excite.ph
-    image: hyperledger/fabric-orderer
+    image: hyperledger/fabric-orderer:x86_64-1.1.0
     environment:
       - ORDERER_GENERAL_LOGLEVEL=debug
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
@@ -62,9 +62,8 @@ services:
   # Peers
   peer0.org1.hf.excite.ph:
     container_name: peer0.org1.hf.excite.ph
-    image: hyperledger/fabric-peer
+    image: hyperledger/fabric-peer:x86_64-1.1.0
     environment:
-      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
       - CORE_LOGGING_PEER=DEBUG
       - CORE_PEER_ADDRESS=peer0.org1.hf.excite.ph:7051
       - CORE_PEER_ADDRESSAUTODETECT=true
@@ -86,7 +85,6 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
-    # command: peer node start --peer-chaincodedev=true
     ports:
       - 7051:7051
       - 7053:7053
