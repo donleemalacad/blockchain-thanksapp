@@ -6,16 +6,16 @@ import (
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
 
-// ThanksCcChaincode implementation of Chaincode
-type ThanksCcChaincode struct {
+// ThanksCC implementation of Chaincode
+type ThanksCC struct {
 }
 
 // Init of the chaincode
 // This function is called only one when the chaincode is instantiated.
 // So the goal is to prepare the ledger to handle future requests.
-func (t *ThanksCcChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *ThanksCC) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("************************************************")
-	fmt.Println("*        ThanksCcChaincode Initialize          *")
+	fmt.Println("*        ThanksCC Initialize          *")
 	fmt.Println("************************************************")
 
 	// Get the function and arguments from the request
@@ -37,9 +37,9 @@ func (t *ThanksCcChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 }
 
 // Invoke - Request Invocation
-func (t *ThanksCcChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *ThanksCC) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("************************************************")
-	fmt.Println("*         ThanksCcChaincode Invoke             *")
+	fmt.Println("*         ThanksCC Invoke             *")
 	fmt.Println("************************************************")
 
 	// Get the function and arguments from the request
@@ -72,7 +72,7 @@ func (t *ThanksCcChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response
 
 func main() {
 	// Start the chaincode and make it ready for futures requests
-	err := shim.Start(new(ThanksCcChaincode))
+	err := shim.Start(new(ThanksCC))
 	if err != nil {
 		fmt.Printf("Error starting Heroes Service chaincode: %s", err)
 	}
