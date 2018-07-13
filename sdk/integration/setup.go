@@ -126,13 +126,30 @@ func (integrate *SdkSetup) InvokeChaincode() error {
 	chaincodePolicy := cauthdsl.SignedByAnyMember([]string{"org1.hf.excite.ph"})
 
 	// Org resource manager will instantiate chaincode on channel
-	resp, err := integrate.resClient.InstantiateCC(integrate.ChannelName, resmgmt.InstantiateCCRequest{ Name: integrate.ChaincodeName, Path: integrate.ChaincodePath, Version: "0", Args: [][]byte{[]byte("init"), []byte("a"), []byte("100"), []byte("b"), []byte("200")}, Policy: chaincodePolicy, },)
+	resp, err := integrate.resClient.InstantiateCC(integrate.ChannelName, resmgmt.InstantiateCCRequest{ Name: integrate.ChaincodeName, Path: integrate.GoPath, Version: "0", Args: [][]byte{[]byte("init")}, Policy: chaincodePolicy, },)
 
 	if err != nil || resp.TransactionID == "" {
 		return errors.WithMessage(err, "Failed to instantiate the chaincode")
 	}
 	
 	fmt.Println("Chaincode instantiated")
+
+	// Create client context
+	clientContext := integrate.sdk.ChannelContext(integrate.ChannelName, fabsdk.WithUser(integrate.PeerUser))
+	integrate.channelClient, err = channel.New(clientContext)
+	if err != nil {
+		return errors.WithMessage(err, "failed to create new channel client")
+	}
+	fmt.Println("Channel client created")
+
+	// Event Client
+	integrate.eventClient, err = event.New(clientContext)
+	if err != nil {
+		return errors.WithMessage(err, "failed to create new event client")
+	}
+	fmt.Println("Event client created")
+
+	fmt.Println("Chaincode Installation & Instantiation Successful")
 
 	return nil
 }

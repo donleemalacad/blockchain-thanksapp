@@ -16,8 +16,8 @@ func main() {
 		ChannelTxPath: os.Getenv("GOPATH") + "/src/github.com/thanksapp/fixtures/artifacts/channel.tx",
 
 		// Chaincode parameters
-		ChaincodeName: "thanksapp",
-		ChaincodePath: "github.com/thanksapp/chaincode/",
+		ChaincodeName: "thankscc",
+		ChaincodePath: "github.com/thanksapp/chaincode/go/",
 		GoPath:        os.Getenv("GOPATH"),
 		PeerAdmin:     "Admin",
 		PeerName:      "org1",
@@ -37,10 +37,17 @@ func main() {
 	// Close SDK
 	defer setup.CloseSDK()
 
-	// Install and instantiate the chaincode
 	err = setup.InvokeChaincode()
 	if err != nil {
-		fmt.Printf("Unable to instantiate the chaincode: %v\n", err)
+		fmt.Printf("Unable to initialize the Fabric SDK: %v\n", err)
 		return
+	}
+
+	// Query the chaincode
+	response, err := setup.SampleDataUsingSDK()
+	if err != nil {
+		fmt.Printf("Unable to query foo on the chaincode: %v\n", err)
+	} else {
+		fmt.Printf("Response from the query foo: %s\n", response)
 	}
 }
