@@ -30,6 +30,7 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	// "github.com/jmoiron/jsonq"
 )
 
 // SimpleChaincode example simple Chaincode implementation
@@ -44,6 +45,9 @@ type data struct {
 	Giver          string `json:"giver"`          // Other peers or system
 	Message        string `json:"message"`        // Message given upon
 	SentTo         string `json:"sentto"`         // Person the point is sent to
+}
+
+type hist struct {
 }
 
 // Init initializes chaincode
@@ -86,10 +90,43 @@ func (t *SimpleChaincode) addPerson(stub shim.ChaincodeStubInterface, args []str
 		return shim.Error("Adding of Person requires 2 parameters")
 	}
 
+	// check if person already exists
+	startKey := "A"
+	endKey := "zzzzzzzzzzzzzzzzzzz"
+	usersKey := make(map[int]string)
+	x := 0
+
+	resultsIterator, err := stub.GetStateByRange(startKey, endKey)
+	println(resultsIterator)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer resultsIterator.Close()
+
+	for resultsIterator.HasNext() {
+		response, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+
+		usersKey[x] = string(response.GetKey())
+		x++
+	}
+	fmt.Print(usersKey)
+
+	for i := 0; i < len(usersKey); i++ {
+		fmt.Print("\n", usersKey[i])
+		if usersKey[i] == args[0] {
+			fmt.Printf("ERROR: person %s already added, try new name", args[0])
+			return shim.Error("ERROR: person already added, try new name")
+		}
+	}
+
 	Name := args[0]
 	PointsReceived := 0
 	PointsSent := 0
-	PointsCurrent := 1
+	// TODO: change 5 to 1, for testing only
+	PointsCurrent := 5
 
 	Giver := args[1]
 	Message := "Welcome the Thanks Application, this is your initial point"
@@ -123,9 +160,11 @@ func (t *SimpleChaincode) getHistoryOfPerson(stub shim.ChaincodeStubInterface, a
 	fmt.Printf("- start getting history of Person transaction: %s\n", person)
 
 	resultsIterator, err := stub.GetHistoryForKey(person)
+
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+
 	defer resultsIterator.Close()
 
 	// buffer is a JSON array containing historic values for the marble
@@ -170,7 +209,7 @@ func (t *SimpleChaincode) getHistoryOfPerson(stub shim.ChaincodeStubInterface, a
 	}
 	buffer.WriteString("]")
 
-	fmt.Printf("\n--- getHistoryForMarble returning:---\n%s\n", buffer.String())
+	fmt.Printf("\n--- Transaction History of %s:---\n%s\n", person, buffer.String())
 
 	return shim.Success(buffer.Bytes())
 }
@@ -182,9 +221,7 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 	if len(args) != 3 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
-	fmt.Println("Time: ", time.Now())
-	fmt.Println("Year: ", time.Now().Year())
-	fmt.Println("Year: ", time.Now().Month())
+	time.LoadLocation("Asia/Shanghai")
 
 	ToPerson := args[0]
 	FromPerson := args[1]
@@ -195,50 +232,40 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 		return shim.Error(err.Error())
 	}
 	defer resultsIterator.Close()
-	// buffer is a JSON array containing historic values for the marble
-	var buffer bytes.Buffer
-	buffer.WriteString("[")
 
-	bArrayMemberAlreadyWritten := false
+	history := make(map[string]map[string]string)
+
+	var dataCheck data
+
+	var timeKey time.Time
+
+	fmt.Println(resultsIterator)
 	for resultsIterator.HasNext() {
 		response, err := resultsIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-		// Add a comma before array members, suppress it for the first array member
-		if bArrayMemberAlreadyWritten == true {
-			buffer.WriteString(",")
+
+		timeKey = time.Unix(response.Timestamp.Seconds, 0)
+
+		err = json.Unmarshal([]byte(response.Value), &dataCheck)
+		if err != nil {
+			return shim.Error(err.Error())
 		}
 
-		// if it was a delete operation on given key, then we need to set the
-		//corresponding value null. Else, we will write the response.Value
-		//as-is (as the Value itself a JSON marble)
-		if response.IsDelete {
-			buffer.WriteString("null")
-		} else {
-			buffer.WriteString(string(response.Value))
-			// buffer.WriteString(string(response))
+		history = map[string]map[string]string{timeKey.String(): map[string]string{"sentto": dataCheck.SentTo}}
+
+		if timeKey.Year() == time.Now().Year() {
+			if timeKey.Month() == time.Now().Month() {
+				if history[timeKey.String()]["sentto"] == ToPerson {
+					fmt.Print("Same Person sent to last month")
+					return shim.Error("Same Person sent last month")
+				}
+			}
 		}
 
-		buffer.WriteString(", \"Timestamp\":")
-		buffer.WriteString("\"")
-		buffer.WriteString(time.Unix(response.Timestamp.Seconds, int64(response.Timestamp.Nanos)).String())
-		buffer.WriteString("\"")
-		/*
-			buffer.WriteString(", \"IsDelete\":")
-			buffer.WriteString("\"")
-			buffer.WriteString(strconv.FormatBool(response.IsDelete))
-			buffer.WriteString("\"")
-		*/
-		buffer.WriteString("}")
-		bArrayMemberAlreadyWritten = true
-		// 	fmt.Printf("%v", response)
 	}
-	buffer.WriteString("]")
 
-	fmt.Printf("\n--- getHistoryForMarble returning:---\n%s\n", buffer.String())
-
-	// sort.Sort(sort.Reverse(resultsIterator))
 	// Get current transferee details
 	ToPersonbytes, err := stub.GetState(ToPerson)
 
@@ -280,6 +307,7 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 	TransferPerson.PointsReceived = TransferPerson.PointsReceived + 1
 	TransferPerson.Giver = FromPerson
 	TransferPerson.Message = args[2]
+	TransferPerson.SentTo = ""
 
 	TransferPersonJSONasByres, _ := json.Marshal(TransferPerson)
 	err = stub.PutState(ToPerson, TransferPersonJSONasByres)
@@ -367,7 +395,7 @@ func (t *SimpleChaincode) getAllUsers(stub shim.ChaincodeStubInterface, args []s
 	}
 	buffer.WriteString("]")
 
-	fmt.Printf("- get All Persons queryResult:\n%s\n", buffer.String())
+	fmt.Printf("- get All Persons query result:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
 }
@@ -385,7 +413,7 @@ func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string)
 	fmt.Println("\nargs: ", args)
 	// Get the state from the ledger
 	Avalbytes, err := stub.GetState(A)
-	fmt.Println("\n Get state: ", Avalbytes)
+
 	if err != nil {
 		jsonResp := "{\"Error\":\"Failed to get state for " + A + "\"}"
 		return shim.Error(jsonResp)
@@ -397,7 +425,7 @@ func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string)
 	}
 
 	jsonResp := "{\"Name\":\"" + string(Avalbytes) + "\"}"
-	fmt.Printf("Query Response:%s\n", jsonResp)
+	fmt.Printf("Get Current State::%s\n", jsonResp)
 	return shim.Success(Avalbytes)
 }
 
