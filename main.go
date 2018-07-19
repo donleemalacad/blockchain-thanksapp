@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/thanksapp/sdk/integration"
+	"github.com/thanksapp/web"
+	"github.com/thanksapp/web/controllers"
 	"os"
 )
 
@@ -50,4 +52,10 @@ func main() {
 	} else {
 		fmt.Printf("Response from the query foo: %s\n", response)
 	}
+
+	// Setup WebApp
+	app := &controllers.Application {
+		Fabric: &setup,
+	}
+	web.Serve(app)
 }
