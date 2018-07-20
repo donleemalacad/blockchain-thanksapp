@@ -125,8 +125,8 @@ func (t *SimpleChaincode) addPerson(stub shim.ChaincodeStubInterface, args []str
 	Name := args[0]
 	PointsReceived := 0
 	PointsSent := 0
-	// TODO: change 5 to 1, for testing only
-	PointsCurrent := 5
+	// TODO: change 5 to 1, for testing only -done
+	PointsCurrent := 1
 
 	Giver := args[1]
 	Message := "Welcome the Thanks Application, this is your initial point"
@@ -256,7 +256,7 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 		history = map[string]map[string]string{timeKey.String(): map[string]string{"sentto": dataCheck.SentTo}}
 
 		if timeKey.Year() == time.Now().Year() {
-			if timeKey.Month() == time.Now().Month() {
+			if timeKey.Month() == time.Now().Month()-1 {
 				if history[timeKey.String()]["sentto"] == ToPerson {
 					fmt.Print("Same Person sent to last month")
 					return shim.Error("Same Person sent last month")
