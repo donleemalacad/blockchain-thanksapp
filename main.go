@@ -45,14 +45,6 @@ func main() {
 		return
 	}
 
-	// Query the chaincode
-	response, err := setup.SampleDataUsingSDK()
-	if err != nil {
-		fmt.Printf("Unable to query foo on the chaincode: %v\n", err)
-	} else {
-		fmt.Printf("Response from the query foo: %s\n", response)
-	}
-
 	// Setup WebApp
 	app := &controllers.Application {
 		Fabric: &setup,

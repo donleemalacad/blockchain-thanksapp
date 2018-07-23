@@ -55,6 +55,17 @@ type hist struct {
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("Initiating Thanks Chaincode")
 
+	var args, args2 []string
+	args = append(args, "Donlee Malacad")
+	args = append(args, "System")
+
+	t.addPerson(stub, args)
+
+	args2 = append(args2, "Alvin Cadacio")
+	args2 = append(args2, "System")
+
+	t.addPerson(stub, args2)
+
 	return shim.Success(nil)
 }
 
@@ -146,7 +157,7 @@ func (t *SimpleChaincode) addPerson(stub shim.ChaincodeStubInterface, args []str
 		return shim.Error(err.Error())
 	}
 
-	return shim.Success(dataJSONasBytes)
+	return shim.Success(nil)
 }
 
 func (t *SimpleChaincode) getHistoryOfPerson(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -375,17 +386,12 @@ func (t *SimpleChaincode) getAllUsers(stub shim.ChaincodeStubInterface) pb.Respo
 		}
 		// Add a comma before array members, suppress it for the first array member
 		if bArrayMemberAlreadyWritten == true {
-			buffer.WriteString(",\n;")
+			buffer.WriteString(",")
 		}
-		buffer.WriteString("{\"Key\":")
-		buffer.WriteString("\"")
-		buffer.WriteString(queryResponse.Key)
-		buffer.WriteString("\"")
 
-		buffer.WriteString(", \"Record\":")
 		// Record is a JSON object, so we write as-is
 		buffer.WriteString(string(queryResponse.Value))
-		buffer.WriteString("}")
+		
 		bArrayMemberAlreadyWritten = true
 	}
 	buffer.WriteString("]")
@@ -411,11 +417,6 @@ func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string)
 
 	if err != nil {
 		jsonResp := "{\"Error\":\"Failed to get state for " + A + "\"}"
-		return shim.Error(jsonResp)
-	}
-
-	if Avalbytes == nil {
-		jsonResp := "{\"Error\":\"Nil amount for " + A + "\"}"
 		return shim.Error(jsonResp)
 	}
 

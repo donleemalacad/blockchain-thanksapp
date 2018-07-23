@@ -16,7 +16,7 @@ func Serve(app *controllers.Application) {
 	// If index is requested, use HomeController
 	http.HandleFunc("/", app.HomeController)
 
-	// If index is requested, use HomeController
+	// If index is requested, use TransactionController
 	http.HandleFunc("/transaction/all/", app.AllTransactionsController)
 
 	// Listen to port 3000
