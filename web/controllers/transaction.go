@@ -5,11 +5,6 @@ import (
 	"encoding/json"
 )
 
-type EntitiesClass struct {
-	Name  string
-	Value int32
-}
-
 type LedgerDetails struct {
 	Name           string `json:"name"`
 	PointsReceived int    `json:"pointsreceived"` // for history of received points, if you convert it to cash this is where it should be deducted(10pts)
