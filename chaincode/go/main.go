@@ -78,7 +78,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		// Getting complete history of person
 		return t.getHistoryOfPerson(stub, args)
 	} else if function == "getAllUsers" {
-		return t.getAllUsers(stub, args)
+		return t.getAllUsers(stub)
 	}
 
 	return shim.Error("Invalid invoke function name. Expecting \"transfer\" \"delete\" \"query\"")
@@ -353,14 +353,9 @@ func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 	return shim.Success(nil)
 }
 
-func (t *SimpleChaincode) getAllUsers(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-
-	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting 2")
-	}
-
-	startKey := args[0]
-	endKey := args[1]
+func (t *SimpleChaincode) getAllUsers(stub shim.ChaincodeStubInterface) pb.Response {
+	startKey := "A"
+	endKey := "zzzzzzzzzzzz"
 
 	resultsIterator, err := stub.GetStateByRange(startKey, endKey)
 	if err != nil {
@@ -429,7 +424,14 @@ func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string)
 	return shim.Success(Avalbytes)
 }
 
+func addPointToAll() {
+	fmt.Println("add Point to all users")
+
+	return
+}
+
 func main() {
+
 	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
