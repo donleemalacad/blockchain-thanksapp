@@ -14,12 +14,7 @@ func Serve(app *controllers.Application) {
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
 	// If index is requested, use HomeController
-	http.HandleFunc("/index.html", app.HomeController)
-
-	// Redirect for Homepage
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/index.html", http.StatusTemporaryRedirect)
-	})
+	http.HandleFunc("/", app.HomeController)
 
 	// If index is requested, use HomeController
 	http.HandleFunc("/transaction/all/", app.AllTransactionsController)
