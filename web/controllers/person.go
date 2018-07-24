@@ -5,9 +5,12 @@ import (
 )
 func (app *Application) AddPersonController(w http.ResponseWriter, r *http.Request) {
 	data := &struct {
-		Success bool
+		Success     bool
+		Fail        bool
+		FailMessage string
 	}{
 		Success: false,
+		Fail: false,
 	}
 	if r.Method == "POST" {
 		// Call ParseForm to parse the raw query
@@ -20,11 +23,14 @@ func (app *Application) AddPersonController(w http.ResponseWriter, r *http.Reque
 
 		// Save to Ledger
 		_, err := app.Fabric.AddPerson(name)
-		if err != nil {
-			http.Error(w, "Unable to query chaincode", 500)
-		}
-		
+				
 		data.Success = true
+		
+		if err != nil {
+			data.Fail = true
+			data.FailMessage = err.Error()
+			data.Success = false
+		}
 	}
 	
 	// Render Template

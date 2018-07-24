@@ -64,3 +64,8 @@ func (bridge *SdkSetup) GetAllUserDetailsInLedger() (string, error) {
 
 	return string(query.Payload), nil
 }
+
+// GetSpecificUserDetails - Retrieve History for Specified User
+func (bridge *SdkSetup) GetSpecificUserDetails() (string, error) {
+	return "", nil
+}

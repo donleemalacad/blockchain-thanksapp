@@ -16,7 +16,14 @@
                     {{ if .Success }}
                     <div class="alert alert-success" role="alert">
                         <h4 class="alert-heading">Well done!</h4>
-                        <p>You have successfully added a new user!</p>
+                        <p>You have successfully added a new user</p>
+                    </div>
+                    {{ end }}
+
+                    {{ if .Fail }}
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Oops!</h4>
+                        <p>{{ .FailMessage }}</p>
                     </div>
                     {{ end }}
                     <br>
