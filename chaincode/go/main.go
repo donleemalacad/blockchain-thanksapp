@@ -194,10 +194,9 @@ func (t *SimpleChaincode) getHistoryOfPerson(stub shim.ChaincodeStubInterface, a
 		}
 		// Add a comma before array members, suppress it for the first array member
 		if bArrayMemberAlreadyWritten == true {
-			buffer.WriteString(",\n")
+			buffer.WriteString(",")
 		}
 
-		buffer.WriteString("\"Value\":")
 		// if it was a delete operation on given key, then we need to set the
 		//corresponding value null. Else, we will write the response.Value
 		//as-is (as the Value itself a JSON marble)
@@ -208,17 +207,17 @@ func (t *SimpleChaincode) getHistoryOfPerson(stub shim.ChaincodeStubInterface, a
 			// buffer.WriteString(string(response))
 		}
 
-		buffer.WriteString(", \"Timestamp\":")
-		buffer.WriteString("\"")
-		buffer.WriteString(time.Unix(response.Timestamp.Seconds, int64(response.Timestamp.Nanos)).String())
-		buffer.WriteString("\"")
+		// buffer.WriteString(", \"Timestamp\":")
+		// buffer.WriteString("\"")
+		// buffer.WriteString(time.Unix(response.Timestamp.Seconds, int64(response.Timestamp.Nanos)).String())
+		// buffer.WriteString("\"")
 		/*
 			buffer.WriteString(", \"IsDelete\":")
 			buffer.WriteString("\"")
 			buffer.WriteString(strconv.FormatBool(response.IsDelete))
 			buffer.WriteString("\"")
 		*/
-		buffer.WriteString("}")
+		// buffer.WriteString("}")
 		bArrayMemberAlreadyWritten = true
 		// 	fmt.Printf("%v", response)
 	}

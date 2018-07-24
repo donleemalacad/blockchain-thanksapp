@@ -66,6 +66,24 @@ func (bridge *SdkSetup) GetAllUserDetailsInLedger() (string, error) {
 }
 
 // GetSpecificUserDetails - Retrieve History for Specified User
-func (bridge *SdkSetup) GetSpecificUserDetails() (string, error) {
-	return "", nil
+func (bridge *SdkSetup) GetSpecificUserDetails(user string) (string, error) {
+
+	// Prepare arguments
+	var args []string
+	args = append(args, "getHistoryOfPerson")
+	args = append(args, user)
+	
+
+	// Access func Query in Chaincode and pass necessary parameters
+	query, err := bridge.channelClient.Query(channel.Request{
+		ChaincodeID: bridge.ChaincodeName, 
+		Fcn: args[0], Args: [][]byte{[]byte(user)},
+	})
+
+	// If Query is unsuccessful
+	if err != nil {
+		return "", fmt.Errorf("Failed to query: %v", err)
+	}
+
+	return string(query.Payload), nil
 }

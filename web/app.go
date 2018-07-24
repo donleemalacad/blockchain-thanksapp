@@ -22,8 +22,11 @@ func Serve(app *controllers.Application) {
 	// If /add/ path is requested, use AddPersonController
 	http.HandleFunc("/add/", app.AddPersonController)
 
-	// If /transaction/user/ path is requested, use UserTransactionsController
+	// If /transaction/select/ path is requested, use UserTransactionsController
 	http.HandleFunc("/transaction/select/", app.UserTransactionsController)
+
+	// If /transaction/user/ path is requested, use ViewUserTransactionsController
+	http.HandleFunc("/transaction/view/", app.ViewUserTransactionsController)
 
 	// Listen to port 3000
 	fmt.Println("Listening (http://localhost:3000/) ...")
