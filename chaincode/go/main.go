@@ -341,13 +341,18 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 	TransfererPersonJSONasByres, _ := json.Marshal(TransfererPerson)
 	err = stub.PutState(FromPerson, TransfererPersonJSONasByres)
 
+	err = stub.SetEvent("eventInvoke", []byte{})
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 
 	fmt.Printf("\nTransfer of Point from %s to %s is completed", FromPerson, ToPerson)
 
-	return shim.Success(nil)
+	return shim.Success(TransfererPersonJSONasByres)
 }
 
 // Deletes an entity from state
