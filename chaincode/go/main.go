@@ -152,7 +152,11 @@ func (t *SimpleChaincode) addPerson(stub shim.ChaincodeStubInterface, args []str
 	dataJSONasBytes, err := json.Marshal(data)
 
 	err = stub.PutState(Name, []byte(dataJSONasBytes))
+	if err != nil {
+		return shim.Error("Failed to execute addPerson function")
+	}
 
+	err = stub.SetEvent("eventInvoke", []byte{})
 	if err != nil {
 		return shim.Error(err.Error())
 	}
