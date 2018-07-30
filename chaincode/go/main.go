@@ -105,7 +105,7 @@ func (t *SimpleChaincode) addPerson(stub shim.ChaincodeStubInterface, args []str
 
 	// check if person already exists
 	startKey := "A"
-	endKey := "zzzzzzzzzzzzzzzzzzz"
+	endKey := "zzzzzzzzzzzzzzzzzzzzz"
 	usersKey := make(map[int]string)
 	x := 0
 
