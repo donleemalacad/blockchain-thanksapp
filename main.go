@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/thanksapp/sdk/integration"
+	"github.com/thanksapp/web"
+	"github.com/thanksapp/web/controllers"
 	"os"
 )
 
@@ -43,11 +45,9 @@ func main() {
 		return
 	}
 
-	// Query the chaincode
-	response, err := setup.SampleDataUsingSDK()
-	if err != nil {
-		fmt.Printf("Unable to query foo on the chaincode: %v\n", err)
-	} else {
-		fmt.Printf("Response from the query foo: %s\n", response)
+	// Setup WebApp
+	app := &controllers.Application {
+		Fabric: &setup,
 	}
+	web.Serve(app)
 }

@@ -1,0 +1,56 @@
+{{define "title"}}
+    ThanksApp - Dashboard
+{{end}}
+
+{{define "breadcrumb"}}
+    Get All Users
+{{end}}
+
+
+{{define "body"}}
+<div class="container-fluid">
+    <div class="row">
+        
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    All Transactions
+                </div>
+                <div class="card-body">
+                    <table class="table table-responsive-sm table-bordered">
+                        <thead>
+                            <th>Name</th>
+                            <th>Received Points</th>
+                            <th>Sent Points</th>
+                            <th>Current Points</th>
+                            <th>Giver</th>
+                            <th>Message</th>
+                            <th>Points Recipient</th>
+                        </thead>
+                        <tbody>
+                            {{range .Result}}
+                            <tr>
+                                <td>{{.Name}}</td>
+                                <td>{{.PointsReceived}}</td>
+                                <td>{{.PointsSent}}</td>
+                                <td>{{.PointsCurrent}}</td>
+                                <td>{{.Giver}}</td>
+                                <td>{{.Message}}</td>
+                                <td>{{.SentTo}}</td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{end}}
+
+{{define "customScripts"}}
+{{end}}

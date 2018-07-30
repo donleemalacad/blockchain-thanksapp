@@ -1,0 +1,114 @@
+{{define "layout"}}
+    <!DOCTYPE html>
+    <!--
+    * CoreUI - Free Bootstrap Admin Template
+    * @version v2.0.0
+    * @link https://coreui.io
+    * Copyright (c) 2018 creativeLabs Łukasz Holeczek
+    * Licensed under MIT (https://coreui.io/license)
+    -->
+    <html lang="en">
+        <head>
+            <base href="./../">
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+            <meta name="description" content="Thanksapp blockchain example app using Hyperledger Fabric">
+            <meta name="author" content="Nobuyuki Mugima, Donlee Malacad, Alvin Jeff Cadacio">
+            <meta name="keyword" content="Bootstrap, Blockchain, Fabric, Hyperledger, Hyperledger-Fabric">
+            <title>{{template "title"}}</title>
+            <!-- Icons-->
+            <link href="/assets/vendors/@coreui/icons/css/coreui-icons.min.css" rel="stylesheet">
+            <link href="/assets/vendors/flag-icon-css/css/flag-icon.min.css" rel="stylesheet">
+            <link href="/assets/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+            <link href="/assets/vendors/simple-line-icons/css/simple-line-icons.css" rel="stylesheet">
+            <!-- Main styles for this application-->
+            <link href="/assets/css/style.css" rel="stylesheet">
+            <link href="/assets/vendors/pace-progress/css/pace.min.css" rel="stylesheet">
+        </head>
+        <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+            <header class="app-header navbar">
+            <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Logo -->
+            <a class="navbar-brand" href="/">
+                <img class="navbar-brand-full" src="#" width="89" height="25" alt="THANKSAPP">
+            </a>
+            <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <ul class="nav navbar-nav ml-auto">
+
+            </ul>
+            </header>
+            <div class="app-body">
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <nav class="sidebar-nav">
+                        <ul class="nav">
+                            <li class="nav-title">Pages</li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/">
+                                <i class="nav-icon fa fa-dashboard"></i> Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/add/">
+                                <i class="nav-icon fa fa-user-plus"></i> Add Person</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/transaction/all/">
+                                <i class="nav-icon fa fa-table"></i> All Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/transaction/select/">
+                                <i class="nav-icon fa fa-users"></i> User Transaction</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/transfer/">
+                                <i class="nav-icon fa fa-users"></i> Transfer</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <button class="sidebar-minimizer brand-minimizer" type="button"></button>
+                </div>
+                <main class="main">
+                    <!-- Breadcrumb-->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                    <a href="/">Home</a>
+                            </li>
+                            <li class="breadcrumb-item active">{{template "breadcrumb"}}</li>
+                        </ol>
+                    </nav>
+
+
+                    <!-- Body -->
+                    {{template "body" .}}
+                </main>
+            </div>
+            <footer class="app-footer">
+            <div>
+                <a href="https://gitlab.com/mugima/hyperledger-fabric-test" target="blank">ThanksApp</a>
+                <span>&copy; 2018 Excite PH.</span>
+            </div>
+            <div class="ml-auto">
+                <span>Powered by:</span>
+                <a href="https://excite.ph" target="blank">Excite PH</a>
+            </div>
+            </footer>
+            <!-- CoreUI and necessary plugins-->
+            <script src="/assets/vendors/jquery/js/jquery.min.js"></script>
+            <script src="/assets/vendors/popper.js/js/popper.min.js"></script>
+            <script src="/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+            <script src="/assets/vendors/pace-progress/js/pace.min.js"></script>
+            <script src="/assets/vendors/perfect-scrollbar/js/perfect-scrollbar.min.js"></script>
+            <script src="/assets/vendors/@coreui/coreui/js/coreui.min.js"></script>
+
+            <!-- Custom Scripts -->
+            {{template "customScripts"}}
+        </body>
+    </html>
+{{end}}
