@@ -2,8 +2,9 @@ package integration
 
 import (
 	"fmt"
-	"github.com/hyperledger/fabric-sdk-go/pkg/client/channel"
 	"time"
+
+	"github.com/hyperledger/fabric-sdk-go/pkg/client/channel"
 )
 
 // AddPerson - Add another user to the ledger
@@ -24,11 +25,10 @@ func (bridge *SdkSetup) AddPerson(name string) (string, error) {
 
 	defer bridge.eventClient.Unregister(reg)
 
-
 	// Access func Query in Chaincode and pass necessary parameters
 	query, err := bridge.channelClient.Execute(channel.Request{
-		ChaincodeID: bridge.ChaincodeName, 
-		Fcn: args[0], Args: [][]byte{[]byte(args[1]), []byte(args[2])},
+		ChaincodeID: bridge.ChaincodeName,
+		Fcn:         args[0], Args: [][]byte{[]byte(args[1]), []byte(args[2])},
 	})
 
 	select {
@@ -50,8 +50,8 @@ func (bridge *SdkSetup) GetAllUserDetailsInLedger() (string, error) {
 
 	// Access func Query in Chaincode and pass necessary parameters
 	query, err := bridge.channelClient.Query(channel.Request{
-		ChaincodeID: bridge.ChaincodeName, 
-		Fcn: args[0], Args: [][]byte{},
+		ChaincodeID: bridge.ChaincodeName,
+		Fcn:         args[0], Args: [][]byte{},
 	})
 
 	// If Query is unsuccessful
@@ -72,12 +72,11 @@ func (bridge *SdkSetup) GetSpecificUserDetails(user string) (string, error) {
 	var args []string
 	args = append(args, "getHistoryOfPerson")
 	args = append(args, user)
-	
 
 	// Access func Query in Chaincode and pass necessary parameters
 	query, err := bridge.channelClient.Query(channel.Request{
-		ChaincodeID: bridge.ChaincodeName, 
-		Fcn: args[0], Args: [][]byte{[]byte(user)},
+		ChaincodeID: bridge.ChaincodeName,
+		Fcn:         args[0], Args: [][]byte{[]byte(user)},
 	})
 
 	// If Query is unsuccessful
@@ -107,13 +106,13 @@ func (bridge *SdkSetup) TransferPoint(from string, to string, message string) (s
 
 	defer bridge.eventClient.Unregister(reg)
 
-
 	// Access func Query in Chaincode and pass necessary parameters
 	query, err := bridge.channelClient.Execute(channel.Request{
-		ChaincodeID: bridge.ChaincodeName, 
-		Fcn: args[0], Args: [][]byte{[]byte(args[1]), []byte(args[2]), []byte(args[3])},
+		ChaincodeID: bridge.ChaincodeName,
+		Fcn:         args[0], Args: [][]byte{[]byte(args[1]), []byte(args[2]), []byte(args[3])},
 	})
-
+	fmt.Print("query")
+	fmt.Print(query)
 	select {
 	case ccEvent := <-notifier:
 		fmt.Printf("Received CC event: %v\n", ccEvent)
