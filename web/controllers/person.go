@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 )
+
 func (app *Application) AddPersonController(w http.ResponseWriter, r *http.Request) {
 	data := &struct {
 		Success     bool
@@ -10,7 +11,7 @@ func (app *Application) AddPersonController(w http.ResponseWriter, r *http.Reque
 		FailMessage string
 	}{
 		Success: false,
-		Fail: false,
+		Fail:    false,
 	}
 	if r.Method == "POST" {
 		// Call ParseForm to parse the raw query
@@ -23,16 +24,16 @@ func (app *Application) AddPersonController(w http.ResponseWriter, r *http.Reque
 
 		// Save to Ledger
 		_, err := app.Fabric.AddPerson(name)
-				
+
 		data.Success = true
-		
+
 		if err != nil {
 			data.Fail = true
 			data.FailMessage = err.Error()
 			data.Success = false
 		}
 	}
-	
+
 	// Render Template
 	renderTemplate(w, r, "add-person.html", data)
 }

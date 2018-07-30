@@ -45,6 +45,8 @@ type data struct {
 	Giver          string `json:"giver"`          // Other peers or system
 	Message        string `json:"message"`        // Message given upon
 	SentTo         string `json:"sentto"`         // Person the point is sent to
+	Timestamp      string `json:"timestamp"`      // Timestamp
+	Error          int    `json:"error"`          // Bolean error
 }
 
 type hist struct {
@@ -142,12 +144,14 @@ func (t *SimpleChaincode) addPerson(stub shim.ChaincodeStubInterface, args []str
 	Giver := args[1]
 	Message := "Welcome the Thanks Application, this is your initial point"
 	SentTo := ""
+	Timestamp := time.Now().String()
+	Error := 0
 
 	fmt.Printf("Added new Person, Name = %s\n", Name)
 	fmt.Printf("Points: Received = %d, Sent = %d, Current = %d\n", PointsReceived, PointsSent, PointsCurrent)
 	fmt.Printf("\nGiver = %s Message = %s\n", Giver, Message)
 
-	data := &data{Name, PointsReceived, PointsSent, PointsCurrent, Giver, Message, SentTo}
+	data := &data{Name, PointsReceived, PointsSent, PointsCurrent, Giver, Message, SentTo, Timestamp, Error}
 	fmt.Println("data: ", data)
 	dataJSONasBytes, err := json.Marshal(data)
 
@@ -197,29 +201,13 @@ func (t *SimpleChaincode) getHistoryOfPerson(stub shim.ChaincodeStubInterface, a
 			buffer.WriteString(",")
 		}
 
-		// if it was a delete operation on given key, then we need to set the
-		//corresponding value null. Else, we will write the response.Value
-		//as-is (as the Value itself a JSON marble)
 		if response.IsDelete {
 			buffer.WriteString("null")
 		} else {
 			buffer.WriteString(string(response.Value))
-			// buffer.WriteString(string(response))
 		}
 
-		// buffer.WriteString(", \"Timestamp\":")
-		// buffer.WriteString("\"")
-		// buffer.WriteString(time.Unix(response.Timestamp.Seconds, int64(response.Timestamp.Nanos)).String())
-		// buffer.WriteString("\"")
-		/*
-			buffer.WriteString(", \"IsDelete\":")
-			buffer.WriteString("\"")
-			buffer.WriteString(strconv.FormatBool(response.IsDelete))
-			buffer.WriteString("\"")
-		*/
-		// buffer.WriteString("}")
 		bArrayMemberAlreadyWritten = true
-		// 	fmt.Printf("%v", response)
 	}
 	buffer.WriteString("]")
 
@@ -273,7 +261,7 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 			if timeKey.Month() == time.Now().Month()-1 {
 				if history[timeKey.String()]["sentto"] == ToPerson {
 					fmt.Print("Same Person sent to last month")
-					return shim.Error("Same Person sent last month")
+					return shim.Error("Error")
 				}
 			}
 		}
@@ -297,7 +285,7 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 		return shim.Error("\n\nFailed to get state: FromPersonbytes\n\n")
 	}
 	if FromPersonbytes == nil {
-		return shim.Error("\n\nFromPersonbytes Entity not found\n\n")
+		return shim.Error("\n\nFromPerson Entity not found\n\n")
 	}
 
 	TransfererPerson := data{}
@@ -305,9 +293,6 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 	err = json.Unmarshal([]byte(FromPersonbytes), &TransfererPerson)
 	if err != nil {
 		return shim.Error(err.Error())
-	}
-	if TransfererPerson.PointsCurrent <= 0 {
-		return shim.Error("\n\nCurrent Point is not enough\n\n")
 	}
 
 	TransferPerson := data{}
@@ -317,11 +302,19 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 		return shim.Error(err.Error())
 	}
 
+	if TransfererPerson.PointsCurrent <= 0 {
+		TransferPerson.Error = 1
+		TransfererPerson.Error = 1
+
+		return shim.Error("\n\nCurrent Point is not enough\n\n")
+	}
 	TransferPerson.Name = ToPerson
 	TransferPerson.PointsReceived = TransferPerson.PointsReceived + 1
 	TransferPerson.Giver = FromPerson
 	TransferPerson.Message = args[2]
 	TransferPerson.SentTo = ""
+	TransferPerson.Timestamp = time.Now().String()
+	TransferPerson.Error = 0
 
 	TransferPersonJSONasByres, _ := json.Marshal(TransferPerson)
 	err = stub.PutState(ToPerson, TransferPersonJSONasByres)
@@ -337,6 +330,8 @@ func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []stri
 	message := fmt.Sprintf("Message to %s: %s", ToPerson, args[2])
 	TransfererPerson.Message = message
 	TransfererPerson.SentTo = ToPerson
+	TransfererPerson.Timestamp = time.Now().String()
+	TransfererPerson.Error = 0
 
 	TransfererPersonJSONasByres, _ := json.Marshal(TransfererPerson)
 	err = stub.PutState(FromPerson, TransfererPersonJSONasByres)
@@ -399,7 +394,7 @@ func (t *SimpleChaincode) getAllUsers(stub shim.ChaincodeStubInterface) pb.Respo
 
 		// Record is a JSON object, so we write as-is
 		buffer.WriteString(string(queryResponse.Value))
-		
+
 		bArrayMemberAlreadyWritten = true
 	}
 	buffer.WriteString("]")

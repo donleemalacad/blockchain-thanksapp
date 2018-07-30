@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"net/http"
 	"encoding/json"
 	"fmt"
+	"net/http"
 )
 
 type AllUsersLedger struct {
@@ -14,6 +14,7 @@ type AllUsersLedger struct {
 	Giver          string `json:"giver"`          // Other peers or system
 	Message        string `json:"message"`        // Message given upon
 	SentTo         string `json:"sentto"`         // Person the point is sent to
+	Error          int    `json:"error"`          // Boolean error
 }
 
 func (app *Application) TransferController(w http.ResponseWriter, r *http.Request) {
@@ -28,12 +29,14 @@ func (app *Application) TransferController(w http.ResponseWriter, r *http.Reques
 	// Using struct to parse byte converted result
 	var details []AllUsersLedger
 	if err := json.Unmarshal(byteConverted, &details); err != nil {
+
 		http.Error(w, "Unable to parse blockchain result", 500)
 	}
-
+	fmt.Println("details")
+	fmt.Println(details)
 	// Map so that you can iterate in template using range struct
 	mapping := map[string]interface{}{
-		"Result" : details,
+		"Result": details,
 	}
 
 	if r.Method == "POST" {
@@ -49,14 +52,17 @@ func (app *Application) TransferController(w http.ResponseWriter, r *http.Reques
 
 		// Save to Ledger
 		success, err := app.Fabric.TransferPoint(to, from, message)
-		
-		if err != nil {
-			http.Error(w, "Unable to transfer points", 500)
-		}
 		fmt.Println(success)
+
+		if err != nil {
+			// data.Fail = true
+			// data.FailMessage = err.Error()
+			// data.Success = false
+		}
 		// http.Redirect(w, r, "/transaction/all/", http.StatusSeeOther)
 	}
-
+	fmt.Print("mapping")
+	fmt.Print(mapping)
 	// Render Template
 	renderTemplate(w, r, "transfer.html", mapping)
 }
