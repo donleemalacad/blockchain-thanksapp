@@ -2,8 +2,8 @@ OrdererOrgs:
   # ---------------------------------------------------------------------------
   # Orderer
   # ---------------------------------------------------------------------------
-  - Name: Orderer
-    Domain: exciteph.com
+  - Name: Points
+    Domain: hf.excite.ph
     Specs:
       - Hostname: orderer
 PeerOrgs:
@@ -11,7 +11,7 @@ PeerOrgs:
   # Peers
   # ---------------------------------------------------------------------------
   - Name: Org1
-    Domain: org1.exciteph.com
+    Domain: org1.hf.excite.ph
     Template:
       Count: 1
     Users:

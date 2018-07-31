@@ -7,10 +7,14 @@ orderer
 peer
 
 # Folders
-artifacts/
-crypto/
 web/certs/
 
 # Files
 web/channel.tx
 .placefolder
+
+# References
+reference.txt
+
+# Binary
+thanksapp

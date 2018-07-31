@@ -8,11 +8,11 @@ echo "#################################################################"
 
 
 PROJPATH=${PWD}
-ARTIFACTSPATH=$PROJPATH/artifacts
-CRYPTOPATH=$ARTIFACTSPATH/crypto
+ARTIFACTSPATH=$PROJPATH/fixtures
+CRYPTOPATH=$ARTIFACTSPATH/crypto-config
 ORDERERS=$CRYPTOPATH/ordererOrganizations
 PEERS=$CRYPTOPATH/peerOrganizations
-CHANNELPATH=$PROJPATH/artifacts/channel
+CHANNELPATH=$PROJPATH/fixtures/artifacts
 CHANNEL_NAME=thanksapp
 
 # Remove any old artifacts
@@ -32,17 +32,17 @@ echo
 echo "##########################################################"
 echo "#########  Generating Orderer Genesis block ##############"
 echo "##########################################################"
-$PROJPATH/configtxgen -profile OneOrgGenesis -outputBlock $CHANNELPATH/genesis.block
+$PROJPATH/configtxgen -profile ThanksApp -outputBlock $CHANNELPATH/genesis.block
 
 echo
 echo "#################################################################"
 echo "### Generating channel configuration transaction 'channel.tx' ###"
 echo "#################################################################"
-$PROJPATH/configtxgen -profile OneOrgChannel -outputCreateChannelTx $CHANNELPATH/channel.tx -channelID $CHANNEL_NAME
+$PROJPATH/configtxgen -profile ThanksApp -outputCreateChannelTx $CHANNELPATH/channel.tx -channelID $CHANNEL_NAME
 cp $CHANNELPATH/channel.tx $PROJPATH/web
 
 echo
 echo "#################################################################"
 echo "####### Generating anchor peer update for ThanksOrg ##########"
 echo "#################################################################"
-$PROJPATH/configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate $CHANNELPATH/Org1MSPAnchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+$PROJPATH/configtxgen -profile ThanksApp -outputAnchorPeersUpdate $CHANNELPATH/Org1MSPAnchors.tx -channelID $CHANNEL_NAME -asOrg Org1

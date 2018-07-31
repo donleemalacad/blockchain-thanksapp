@@ -1,0 +1,5 @@
+ignored = ["github.com/thanksapp/chaincode"]
+
+[[constraint]]
+  name = "github.com/hyperledger/fabric-sdk-go"
+  revision = "a906355f73d060d7bf95874a9e90dc17589edbb3"

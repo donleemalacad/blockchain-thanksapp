@@ -1,0 +1,87 @@
+{{define "title"}}
+    ThanksApp - Dashboard
+{{end}}
+
+{{define "breadcrumb"}}
+    Dashboard
+{{end}}
+
+
+{{define "body"}}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/transfer/" method="POST">
+                    <h1>Transfer Points Demo</h1>
+                    <hr>
+                    <br>
+
+                    {{ if .Success }}
+                        <div class="alert alert-success" role="alert">
+                            <h4 class="alert-heading">Well done!</h4>
+                            <p>Successful Transfer</p>
+                            <hr>
+                            <p>Another Message</p>
+                        </div>
+                    {{ end }}
+                    
+                    {{ if .Fail }}
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Oops!</h4>
+                        <p>{{ .FailMessage }}</p>
+                    </div>
+                    {{ end }}
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <label class="font-weight-bold text-danger">Transfer From User Account :</label>
+                            <select class="form-control col-md-12" name="from" required="required">
+                                <option value="">Please Select One</option>
+                                {{range .Result}}
+                                <option value="{{.Name}}">{{.Name}}</option>
+                                {{end}}
+                            </select>
+                            <br>
+                            <label class="font-weight-bold text-success">Transfer To User Account :</label>
+                            <select class="form-control col-md-12" name="to" required="required">
+                                <option value="">Please Select One</option>
+                                {{range .Result}}
+                                <option value="{{.Name}}">{{.Name}}</option>
+                                {{end}}
+                            </select>
+                            <br>
+                            <div class="form-group">
+                                <label class="font-weight-bold">Transfer Message :</label>
+                                <input class="form-control" name="message" type="text" placeholder="Enter Message" required="required">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control btn btn-primary" placeholder="123" type="submit" value="Transfer">
+                            </div>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{define "customScripts"}}
+<script>
+
+        $('select').change(function() {
+            console.log(this);
+            // If a name is selected in select field, Disable the other on the other select field
+            $(this)
+                .siblings('select')
+                .children('option[value="' + this.value + '"]')
+                .attr('disabled', true)
+                .siblings().removeAttr('disabled');
+        });
+
+</script>
+{{end}}

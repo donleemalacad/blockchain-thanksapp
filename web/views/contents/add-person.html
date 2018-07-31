@@ -1,0 +1,56 @@
+{{define "title"}}
+    ThanksApp - Dashboard
+{{end}}
+
+{{define "breadcrumb"}}
+    Add Person
+{{end}}
+
+
+{{define "body"}}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    {{ if .Success }}
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Well done!</h4>
+                        <p>You have successfully added a new user</p>
+                    </div>
+                    {{ end }}
+
+                    {{ if .Fail }}
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Oops!</h4>
+                        <p>{{ .FailMessage }}</p>
+                    </div>
+                    {{ end }}
+                    <br>
+                    <h3>Add Person</h3>
+                    <hr>
+                    <form class="form-horizontal" action="/add/" method="POST">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-user"></i>
+                                    </span>
+                                </div>
+                                <input id="username" name="name" class="form-control" placeholder="Enter Name" type="text">
+                            </div>
+                        </div>
+                        <input type="hidden" name="submitTrigger">
+                        <div class="form-group form-actions">
+                            <button type="submit" class="btn btn-success pull-right">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{define "customScripts"}}
+{{end}}
