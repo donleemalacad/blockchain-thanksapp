@@ -30,6 +30,7 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	"github.com/robfig/cron"
 	// "github.com/jmoiron/jsonq"
 )
 
@@ -56,7 +57,7 @@ type hist struct {
 // ===========================
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("Initiating Thanks Chaincode")
-
+	t.runMonthlyGenerate(stub)
 	var args, args2 []string
 	args = append(args, "Donlee Malacad")
 	args = append(args, "System")
@@ -97,6 +98,82 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Error("Invalid invoke function name. Expecting \"transfer\" \"delete\" \"query\"")
 }
 
+func (t *SimpleChaincode) addPointToAll(stub shim.ChaincodeStubInterface) pb.Response {
+	fmt.Println("add Point to all users")
+
+	startKey := "A"
+	endKey := "zzzzzzzzzzzzz"
+	usersKey := make(map[int]string)
+	x := 0
+
+	resultsIterator, err := stub.GetStateByRange(startKey, endKey)
+	fmt.Println(resultsIterator)
+	if err != nil {
+		fmt.Printf("ERROR")
+		fmt.Print(err.Error())
+		return shim.Error(err.Error())
+	}
+	defer resultsIterator.Close()
+
+	for resultsIterator.HasNext() {
+		response, err := resultsIterator.Next()
+		if err != nil {
+			fmt.Printf("ERROR2")
+			fmt.Print(err.Error())
+			return shim.Error(err.Error())
+		}
+
+		usersKey[x] = string(response.GetKey())
+		x++
+	}
+	fmt.Print(usersKey)
+
+	// for i := 0; i < len(usersKey); i++ {
+	// 	fmt.Print("\n", usersKey[i])
+	//// add point
+	// 	ToPersonbytes, err := stub.GetState(ToPerson)
+
+	// if err != nil {
+	// 	return shim.Error("\n\nFailed to get state: ToPerson\n\n")
+	// }
+	// if ToPersonbytes == nil {
+	// 	return shim.Error("ToPerson Entity not found")
+	// }
+	// TransferPerson := data{}
+
+	// err = json.Unmarshal([]byte(ToPersonbytes), &TransferPerson)
+	// if err != nil {
+	// 	return shim.Error(err.Error())
+	// }
+
+	// TransferPerson.Name = ToPerson
+	// TransferPerson.PointsReceived = TransferPerson.PointsReceived + 1
+	// TransferPerson.Giver = FromPerson
+	// TransferPerson.Message = args[2]
+	// TransferPerson.SentTo = ""
+
+	// TransferPersonJSONasByres, _ := json.Marshal(TransferPerson)
+	// err = stub.PutState(ToPerson, TransferPersonJSONasByres)
+
+	// if err != nil {
+	// 	return shim.Error(err.Error())
+	// }
+	// }
+	return shim.Success(nil)
+}
+
+func (t *SimpleChaincode) runMonthlyGenerate(stub shim.ChaincodeStubInterface) pb.Response {
+	c := cron.New()
+	c.AddFunc("@every 10s", func() {
+		fmt.Println("every 2 sec")
+		// t.addPointToAll(stub)
+	})
+	c.Start()
+	// fmt.Println("done")
+
+	return shim.Success(nil)
+}
+
 func (t *SimpleChaincode) addPerson(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 2 {
@@ -105,7 +182,7 @@ func (t *SimpleChaincode) addPerson(stub shim.ChaincodeStubInterface, args []str
 
 	// check if person already exists
 	startKey := "A"
-	endKey := "zzzzzzzzzzzzzzzzzzzzz"
+	endKey := "zzzzzzzzzzzzzzzzzzz"
 	usersKey := make(map[int]string)
 	x := 0
 
