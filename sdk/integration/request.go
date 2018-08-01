@@ -87,6 +87,48 @@ func (bridge *SdkSetup) GetSpecificUserDetails(user string) (string, error) {
 	return string(query.Payload), nil
 }
 
+// ReplenishPoints - adds points to everyone every month by cron
+func (bridge *SdkSetup) ReplenishPoints() (string, error) {
+
+	// Prepare arguments
+	var args []string
+	args = append(args, "addPointToAll")
+
+	eventID := "eventInvoke"
+	fmt.Printf("replenishpoints request")
+	reg, notifier, err := bridge.eventClient.RegisterChaincodeEvent(bridge.ChaincodeName, eventID)
+	if err != nil {
+		return "", err
+	}
+
+	defer bridge.eventClient.Unregister(reg)
+
+	// Access func Query in Chaincode and pass necessary parameters
+	query, err := bridge.channelClient.Execute(channel.Request{
+		ChaincodeID: bridge.ChaincodeName,
+		Fcn:         args[0], Args: [][]byte{},
+	})
+	fmt.Printf("query")
+	fmt.Print(query)
+	fmt.Printf("err")
+	fmt.Println(err)
+
+	if err != nil {
+		fmt.Println(err)
+
+		return "replenish err", err
+	}
+
+	select {
+	case ccEvent := <-notifier:
+		fmt.Printf("Received CC event: %v\n", ccEvent)
+	case <-time.After(time.Second * 20):
+		return "", fmt.Errorf("Chaincode Event failed for eventId(%s)", eventID)
+	}
+
+	return string(query.Payload), nil
+}
+
 // TransferPoint - Point Transferring Between two Users
 func (bridge *SdkSetup) TransferPoint(from string, to string, message string) (string, error) {
 
