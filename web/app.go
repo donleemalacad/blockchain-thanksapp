@@ -2,8 +2,9 @@ package web
 
 import (
 	"fmt"
-	"github.com/thanksapp/web/controllers"
 	"net/http"
+
+	"github.com/thanksapp/web/controllers"
 )
 
 func Serve(app *controllers.Application) {
@@ -30,6 +31,9 @@ func Serve(app *controllers.Application) {
 
 	// If /transaction/view/ path is requested, use ViewUserTransactionsController
 	http.HandleFunc("/transfer/", app.TransferController)
+
+	// If /transaction/view/ path is requested, use ViewUserTransactionsController
+	http.HandleFunc("/replenish/", app.ReplenishController)
 
 	// Listen to port 3000
 	fmt.Println("Listening (http://localhost:3000/) ...")

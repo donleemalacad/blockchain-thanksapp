@@ -30,8 +30,6 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	"github.com/robfig/cron"
-	// "github.com/jmoiron/jsonq"
 )
 
 // SimpleChaincode example simple Chaincode implementation
@@ -57,7 +55,7 @@ type hist struct {
 // ===========================
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("Initiating Thanks Chaincode")
-	t.runMonthlyGenerate(stub)
+
 	var args, args2 []string
 	args = append(args, "Donlee Malacad")
 	args = append(args, "System")
@@ -93,13 +91,31 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.getHistoryOfPerson(stub, args)
 	} else if function == "getAllUsers" {
 		return t.getAllUsers(stub)
+	} else if function == "addPointToAll" {
+		return t.addPointToAll(stub)
 	}
-
 	return shim.Error("Invalid invoke function name. Expecting \"transfer\" \"delete\" \"query\"")
 }
 
 func (t *SimpleChaincode) addPointToAll(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("add Point to all users")
+
+	localTime, _ := time.LoadLocation("Asia/Tokyo")
+	now := time.Now().In(localTime)
+	fmt.Print(now)
+
+	if now.Day() == 1 {
+		fmt.Print("first of the month")
+		fmt.Print(now.Hour())
+		if now.Hour() != 1 {
+			fmt.Print("not 1st hour of the 1st of the month")
+			return shim.Error("Not time of the month to replenish(not 1st hour of the 1st of the month)")
+		}
+	} else {
+		fmt.Print("not 1st of the month")
+
+		return shim.Error("Not time of the month to replenish(not 1st of the month)")
+	}
 
 	startKey := "A"
 	endKey := "zzzzzzzzzzzzz"
@@ -128,48 +144,46 @@ func (t *SimpleChaincode) addPointToAll(stub shim.ChaincodeStubInterface) pb.Res
 	}
 	fmt.Print(usersKey)
 
-	// for i := 0; i < len(usersKey); i++ {
-	// 	fmt.Print("\n", usersKey[i])
-	//// add point
-	// 	ToPersonbytes, err := stub.GetState(ToPerson)
+	for i := 0; i < len(usersKey); i++ {
+		fmt.Print("\n", usersKey[i])
+		// add point
+		AddPointPersonBytes, err := stub.GetState(usersKey[i])
+		fmt.Printf("\nAddPointPersonBytes\n")
+		fmt.Print(AddPointPersonBytes)
+		if err != nil {
+			return shim.Error("\n\nFailed to get state: ToPerson\n\n")
+		}
+		if AddPointPersonBytes == nil {
+			return shim.Error("AddPointPerson Entity not found")
+		}
+		AddPointPerson := data{}
 
-	// if err != nil {
-	// 	return shim.Error("\n\nFailed to get state: ToPerson\n\n")
-	// }
-	// if ToPersonbytes == nil {
-	// 	return shim.Error("ToPerson Entity not found")
-	// }
-	// TransferPerson := data{}
+		err = json.Unmarshal([]byte(AddPointPersonBytes), &AddPointPerson)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		fmt.Printf("\nAddPointPerson\n")
+		fmt.Print(AddPointPerson)
+		AddPointPerson.Name = usersKey[i]
+		AddPointPerson.PointsCurrent = AddPointPerson.PointsCurrent + 1
+		AddPointPerson.Giver = "System"
+		AddPointPerson.Message = "System Generated"
+		AddPointPerson.SentTo = ""
+		AddPointPerson.Timestamp = time.Now().String()
 
-	// err = json.Unmarshal([]byte(ToPersonbytes), &TransferPerson)
-	// if err != nil {
-	// 	return shim.Error(err.Error())
-	// }
+		fmt.Printf("\nAddPointPerson Updated\n")
+		fmt.Print(AddPointPerson)
+		AddPointPersonJSONasBytes, _ := json.Marshal(AddPointPerson)
+		stub.PutState(usersKey[i], AddPointPersonJSONasBytes)
+		fmt.Printf("AddPointPersonJSONasBytes")
 
-	// TransferPerson.Name = ToPerson
-	// TransferPerson.PointsReceived = TransferPerson.PointsReceived + 1
-	// TransferPerson.Giver = FromPerson
-	// TransferPerson.Message = args[2]
-	// TransferPerson.SentTo = ""
+		fmt.Print(AddPointPersonJSONasBytes)
+	}
 
-	// TransferPersonJSONasByres, _ := json.Marshal(TransferPerson)
-	// err = stub.PutState(ToPerson, TransferPersonJSONasByres)
-
-	// if err != nil {
-	// 	return shim.Error(err.Error())
-	// }
-	// }
-	return shim.Success(nil)
-}
-
-func (t *SimpleChaincode) runMonthlyGenerate(stub shim.ChaincodeStubInterface) pb.Response {
-	c := cron.New()
-	c.AddFunc("@every 10s", func() {
-		fmt.Println("every 2 sec")
-		// t.addPointToAll(stub)
-	})
-	c.Start()
-	// fmt.Println("done")
+	err = stub.SetEvent("eventInvoke", []byte{})
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 
 	return shim.Success(nil)
 }
