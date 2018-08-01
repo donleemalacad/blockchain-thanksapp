@@ -34,3 +34,10 @@ sh build.sh
 ```
 http://localhost:3000/
 ```
+--------
+
+### Monthly Generation
+Please add this line of code to your server crontab
+```
+0 1 1 * * /usr/bin/curl --silent 'http://localhost:3000/replenish' &>/dev/null
+```
