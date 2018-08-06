@@ -1,11 +1,14 @@
 # Thanks App
----
+
 ### Version Used:
-Hyperledger Fabric
+Hyperledger Fabric: 1.1  
+Python: 2.7  
+Node: 8.9.x  
+Go: 1.10.2
 
 ---
 
-### Ensure Installation of Hyperledger Fabric first:
+## Ensure Installation of Hyperledger Fabric first:
 
 Installation notes can be found [here](http://hyperledger-fabric.readthedocs.io/en/release-1.1/getting_started.html)
 
