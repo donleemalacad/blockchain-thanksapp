@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"github.com/thanksapp/sdk/integration"
 	"github.com/thanksapp/web"
 	"github.com/thanksapp/web/controllers"
@@ -9,6 +10,7 @@ import (
 )
 
 func main() {
+    restartKey, _ := strconv.Atoi(os.Getenv("RESTARTTRIGGER"))
 	setup := integration.SdkSetup{
 		// Network parameters 
 		OrdererName: "orderer.hf.excite.ph",
@@ -30,7 +32,7 @@ func main() {
 	}
 
 	// Initialization of the Fabric SDK
-	err := setup.Initialize()
+	err := setup.Initialize(restartKey)
 	if err != nil {
 		fmt.Printf("Unable to initialize the Fabric SDK: %v\n", err)
 		return
@@ -39,7 +41,7 @@ func main() {
 	// Close SDK
 	defer setup.CloseSDK()
 
-	err = setup.InvokeChaincode()
+	err = setup.InvokeChaincode(restartKey)
 	if err != nil {
 		fmt.Printf("Unable to initialize the Fabric SDK: %v\n", err)
 		return
